@@ -1,0 +1,30 @@
+@startuml SenTontine_Deployment
+title SenTontine - Diagramme de Déploiement
+
+artifact "Flutter App" as app {
+  component "Membre UI" as member_ui
+  component "Admin UI" as admin_ui
+}
+
+artifact "Data Layer" as data_layer {
+  component "SharedData\n(Singleton)" as shared_data
+  component "Local Storage\n(Shared Preferences)" as storage
+}
+
+artifact "Payment Layer" as payment_layer {
+  component "Stripe Payment\nSimulation" as stripe
+}
+
+artifact "Backend Services" as backend {
+  component "API Server" as api
+  component "Database" as db
+}
+
+member_ui --> shared_data
+admin_ui --> shared_data
+shared_data --> storage
+shared_data --> api
+stripe --> api
+api --> db
+
+@enduml

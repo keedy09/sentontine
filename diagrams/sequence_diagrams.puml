@@ -1,0 +1,94 @@
+@startuml SenTontine_Sequences
+
+title SenTontine - Diagrammes de Séquence
+
+== Scénario 1: Effectuer un Paiement (Membre) ==
+
+actor Membre as member
+participant "PaiementsPage" as page
+participant "StripePaymentSimulation" as stripe
+participant "SharedData" as data
+
+member -> page: Clic sur "Payer"
+activate page
+page -> page: _ouvrirPaiementStripe()
+page -> stripe: showDialog()
+activate stripe
+page <-- stripe: Affiche formulaire de paiement
+member -> stripe: Saisit les données
+stripe -> stripe: _simulatePayment()
+stripe -> data: validerPaiement(id)
+activate data
+data -> data: Mets à jour statut
+data --> stripe: success = true
+deactivate data
+stripe -> page: onPaymentSuccess()
+stripe --> member: SnackBar(Paiement réussi)
+deactivate stripe
+page -> page: setState()
+page --> member: Actualise l'interface
+deactivate page
+
+== Scénario 2: Gérer les Paiements (Admin) ==
+
+actor Admin as admin
+participant "PaiementsAdminPage" as admin_page
+participant "SharedData" as data2
+
+admin -> admin_page: Accès à la page
+activate admin_page
+admin_page -> data2: getPaiements()
+activate data2
+data2 --> admin_page: List<Paiement>
+deactivate data2
+admin_page --> admin: Affiche liste
+admin -> admin_page: Clic sur détails
+admin_page -> admin_page: _afficherDetailsPaiement()
+admin_page --> admin: Dialog avec infos
+admin -> admin_page: Clic "Valider"
+admin_page -> data2: validerPaiement(id)
+activate data2
+data2 --> admin_page: success = true
+deactivate data2
+admin_page -> admin_page: setState()
+admin_page --> admin: Actualise liste
+deactivate admin_page
+
+== Scénario 3: Consulter les Tontines (Membre) ==
+
+actor Membre as member2
+participant "TontinesPage" as tontines
+participant "SharedData" as data3
+
+member2 -> tontines: Accès à la page
+activate tontines
+tontines -> data3: getTontines()
+activate data3
+data3 --> tontines: List<Tontine>
+deactivate data3
+tontines --> member2: Affiche tontines
+member2 -> tontines: Clic sur tontine
+tontines -> tontines: _afficherDetails()
+tontines --> member2: Dialog avec détails
+member2 -> member2: Consulte infos
+deactivate tontines
+
+== Scénario 4: Voir le Tableau de Bord (Membre) ==
+
+actor Membre as member3
+participant "HomeMemberPage" as home
+participant "SharedData" as data4
+
+member3 -> home: Accès à la page d'accueil
+activate home
+home -> data4: getMembre()
+home -> data4: getTontines()
+home -> data4: getPaiements()
+activate data4
+data4 --> home: Infos membres + tontines + paiements
+deactivate data4
+home --> member3: Affiche tableau de bord
+home --> member3: Stats + Tontines actives
+deactivate home
+
+@enduml

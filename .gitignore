@@ -1,0 +1,30 @@
+# Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+build/
+.packages
+
+# Android Studio
+.idea/
+*.iml
+
+# Android
+android/.gradle/
+android/local.properties
+android/key.properties
+
+# iOS et macOS
+ios/Flutter/ephemeral/
+macos/Flutter/ephemeral/
+
+# VS Code
+.vscode/
+
+# Fichiers temporaires
+*.log
+.DS_Store
+
+# Variables et secrets
+.env

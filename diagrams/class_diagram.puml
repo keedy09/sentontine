@@ -1,0 +1,116 @@
+@startuml SenTontine_Classes
+title SenTontine - Diagramme de Classes
+
+class SharedData {
+  - {static} _instance: SharedData
+  - membres: List<Map<String, dynamic>>
+  - tontines: List<Map<String, dynamic>>
+  - paiements: List<Map<String, dynamic>>
+  ---
+  + {static} getInstance(): SharedData
+  + getMembre(id: String): Map?
+  + getTontine(id: String): Map?
+  + getPaiementsMembre(membreId: String): List
+  + validerPaiement(paiementId: String): bool
+}
+
+class Membre {
+  - id: String
+  - nom: String
+  - email: String
+  - tontineId: String
+  - solde: int
+  ---
+  + toString(): String
+}
+
+class Tontine {
+  - id: String
+  - nom: String
+  - montant: int
+  - frequence: String
+  - statut: String
+  - membres: int
+  - description: String
+  - dateDebut: String
+  - dateFin: String
+  ---
+  + toString(): String
+}
+
+class Paiement {
+  - id: String
+  - membreId: String
+  - tontineId: String
+  - montant: int
+  - statut: String
+  - date: String
+  ---
+  + toString(): String
+}
+
+class PaiementsAdminPage {
+  - _tontineSelectionnee: String?
+  - _membreSelectionne: String?
+  - _searchQuery: String
+  - _data: SharedData
+  ---
+  + build(context: BuildContext): Widget
+  - _afficherDetailsPaiement(paiement: Map): void
+  - _buildStatBadge(label: String, count: int, color: Color): Widget
+}
+
+class PaiementsPage {
+  - membreId: String?
+  - data: SharedData
+  ---
+  + build(context: BuildContext): Widget
+  - _ouvrirPaiementStripe(paiement: Map): void
+  - _afficherRecu(paiement: Map): void
+  - _buildStatCard(title: String, value: int, color: Color): Widget
+  - _buildActionButton(icon: IconData, label: String, color: Color): Widget
+}
+
+class TontinesPage {
+  - membreId: String?
+  ---
+  + build(context: BuildContext): Widget
+  - _buildTontineCard(context: BuildContext, tontine: Map, estMembre: bool): Widget
+  - _buildInfoItem(icon: IconData, label: String, value: String): Widget
+  - _afficherDetails(context: BuildContext, tontine: Map): void
+  - _buildDetailRow(label: String, value: String): Widget
+}
+
+class HomeMemberPage {
+  - membreId: String?
+  - data: SharedData
+  ---
+  + build(context: BuildContext): Widget
+  - _buildStatCard(title: String, value: String, icon: IconData, color: Color): Widget
+  - _buildTontineCard(tontine: Map): Widget
+}
+
+class StripePaymentSimulation {
+  - paiement: Map<String, dynamic>
+  - onPaymentSuccess: Function()
+  - onPaymentCancel: Function()
+  - _isProcessing: bool
+  ---
+  + build(context: BuildContext): Widget
+  - _simulatePayment(): Future<void>
+}
+
+SharedData "1" *-- "*" Membre : contains
+SharedData "1" *-- "*" Tontine : contains
+SharedData "1" *-- "*" Paiement : contains
+
+PaiementsAdminPage --> SharedData : uses
+PaiementsPage --> SharedData : uses
+PaiementsPage --> StripePaymentSimulation : opens
+TontinesPage --> SharedData : uses
+HomeMemberPage --> SharedData : uses
+
+Paiement --> Membre : belongsTo
+Paiement --> Tontine : belongsTo
+
+@enduml
